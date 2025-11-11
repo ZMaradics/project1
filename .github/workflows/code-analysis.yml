@@ -21,13 +21,13 @@ jobs:
         java-version: '25'
         distribution: 'temurin'
         architecture: x64
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v5
-      with:
-        gradle-version: '9.2.0'
+        cache: 'gradle'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew clean build
+      run: ./gradlew clean build --no-daemon
 
     # Initializes CodeQL tools and creates a codebase for analysis.
     - name: Initialize CodeQL
