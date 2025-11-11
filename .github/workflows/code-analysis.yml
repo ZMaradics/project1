@@ -2,60 +2,22 @@ name: Code Analysis
 
 on:
   pull_request:
-    branches: [ main ]
+    types: [opened, synchronize, reopened]
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
+      - 'releases/**'
 
 jobs:
-  # -------------------------------
-  # PR Analysis (No Secrets)
-  # -------------------------------
-  pr-analysis:
+  sonarqube:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      # Install Sonar Scanner
-      #- name: Install Sonar Scanner
-      #  run: |
-      #    curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-      #    unzip sonar-scanner.zip -d $HOME
-      #    echo "$HOME/sonar-scanner-4.8.0.2856-linux/bin" >> $GITHUB_PATH
-
-      # Sonar Preview Mode
-      #- name: Sonar Preview Analysis
-      #  run: |
-      #    sonar-scanner \
-      #      -Dsonar.projectKey=my-project \
-      #      -Dsonar.sources=. \
-      #      -Dsonar.analysis.mode=preview \
-      #      -Dsonar.report.export.path=sonar-report.json
-      
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v5
-        with:
-          args: >
-            -Dsonar.projectKey=my-project
-            -Dsonar.sources=.
-            -Dsonar.analysis.mode=preview
-
-
-      # Dependency Check
-      - name: Run Dependency Check
-        run: |
-          curl -sSLo dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v8.4.0/dependency-check-8.4.0-release.zip
-          unzip dependency-check.zip -d $HOME/dependency-check
-          $HOME/dependency-check/bin/dependency-check.sh \
-            --project "MyProject" \
-            --scan ./ \
-            --format "HTML" \
-            --out ./dependency-report
-
-      # Upload reports as artifacts
-      - name: Upload Analysis Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: analysis-reports
-          path: |
-            sonar-report.json
-            dependency-report
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v6.0.0
+      #env:
+      #  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
