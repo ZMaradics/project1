@@ -10,8 +10,12 @@ on:
       - 'releases/**'
 
 jobs:
-  sonarqube:
+  code-analysis:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     steps:
     - uses: actions/checkout@v5
 
