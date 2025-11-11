@@ -16,20 +16,29 @@ jobs:
       - uses: actions/checkout@v3
 
       # Install Sonar Scanner
-      - name: Install Sonar Scanner
-        run: |
-          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner.zip -d $HOME
-          export PATH="$HOME/sonar-scanner-4.8.0.2856-linux/bin:$PATH"
+      #- name: Install Sonar Scanner
+      #  run: |
+      #    curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+      #    unzip sonar-scanner.zip -d $HOME
+      #    echo "$HOME/sonar-scanner-4.8.0.2856-linux/bin" >> $GITHUB_PATH
 
       # Sonar Preview Mode
-      - name: Sonar Preview Analysis
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=my-project \
-            -Dsonar.sources=. \
-            -Dsonar.analysis.mode=preview \
-            -Dsonar.report.export.path=sonar-report.json
+      #- name: Sonar Preview Analysis
+      #  run: |
+      #    sonar-scanner \
+      #      -Dsonar.projectKey=my-project \
+      #      -Dsonar.sources=. \
+      #      -Dsonar.analysis.mode=preview \
+      #      -Dsonar.report.export.path=sonar-report.json
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v5
+        with:
+          args: >
+            -Dsonar.projectKey=my-project
+            -Dsonar.sources=.
+            -Dsonar.analysis.mode=preview
+
 
       # Dependency Check
       - name: Run Dependency Check
